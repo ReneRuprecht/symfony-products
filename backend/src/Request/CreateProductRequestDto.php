@@ -2,8 +2,10 @@
 
 namespace App\Request;
 
+use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Length;
 
 class CreateProductRequestDto extends AbstractBaseRequestDto
 {
@@ -14,10 +16,12 @@ class CreateProductRequestDto extends AbstractBaseRequestDto
 
     #[Type('int')]
     #[NotBlank([])]
+    #[GreaterThan(0)]
     protected int $regularPrice;
 
     #[Type('int')]
     #[NotBlank([])]
+    #[GreaterThan(0)]
     protected int $discountPrice;
 
     #[Type('string')]
@@ -26,6 +30,7 @@ class CreateProductRequestDto extends AbstractBaseRequestDto
 
     #[Type('int')]
     #[NotBlank([])]
+    #[Length(5)]
     protected int $postalCode;
 
     public function getName(): string
