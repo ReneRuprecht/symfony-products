@@ -1,0 +1,15 @@
+FROM php:8.1-fpm-alpine
+
+RUN apk add icu-dev 
+RUN docker-php-ext-configure intl
+RUN docker-php-ext-install mysqli pdo pdo_mysql intl
+RUN docker-php-ext-enable intl
+
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install xdebug-3.1.6 
+
+RUN mkdir -p /tmp/xdebug
+RUN touch /tmp/xdebug/xdebug.log
+RUN touch /tmp/xdebug/xdebug-example.log
+RUN chmod 777 /tmp/xdebug/xdebug.log
+RUN chmod 777 /tmp/xdebug/xdebug-example.log
