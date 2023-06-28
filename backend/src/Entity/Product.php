@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Product
+class Product implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,6 +35,12 @@ class Product
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
+
+    public function __construct()
+    {
+        $this->setCreatedAt(new DateTimeImmutable());
+        $this->setUpdatedAt(new DateTimeImmutable());
+    }
 
     public function getId(): ?int
     {
@@ -121,5 +129,13 @@ class Product
         $this->updated_at = $updated_at;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            "id" => $this->getId(),
+            "name" => $this->getName()
+        ];
     }
 }

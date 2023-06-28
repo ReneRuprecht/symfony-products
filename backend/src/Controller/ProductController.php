@@ -2,29 +2,30 @@
 
 namespace App\Controller;
 
-use App\Request\CreateProductRequestDto;
 use App\Service\ProductService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Request\CreateProductRequestDto;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/api/v1/products')]
 class ProductController extends AbstractController
 {
-    private $productService;
 
-    public function __construct(ProductService $productService)
+    public function __construct(private ProductService $productService)
     {
-        $this->productService = $productService;
     }
 
     #[Route('/', name: 'all_products', methods: 'GET')]
     public function index(): JsonResponse
     {
-        return $this->json([
-            'data' => $this->productService->findAll(),
-            'path' => 'src/Controller/ProductController.php',
-        ]);
+
+        return $this->json(
+            data: [
+                'products' => $this->productService->findAll()
+            ],
+            status: 200
+        );
     }
 
     #[Route(name: 'add_products', methods: 'POST')]
@@ -34,8 +35,11 @@ class ProductController extends AbstractController
 
         if (!$requestIsValid) return $this->json(['message' => 'Invalid request body'], status: 422);
 
-        return $this->json([
-            'productName' => $createProductRequestDto->getName()
-        ], status: 201);
+        return $this->json(
+            [
+                'product' => $this->productService->save($createProductRequestDto)
+            ],
+            status: 201
+        );
     }
 }
