@@ -7,6 +7,7 @@ use App\Request\CreateProductRequestDto;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 #[Route('/api/v1/products')]
 class ProductController extends AbstractController
@@ -28,7 +29,22 @@ class ProductController extends AbstractController
         );
     }
 
-    #[Route(name: 'add_products', methods: 'POST')]
+    #[Route('/id={id}', name: 'single_product', methods: 'GET')]
+    public function findById(Request $request): JsonResponse
+    {
+        $id = intval($request->attributes->get('_route_params')['id']);
+
+        if ($id <= 0) return $this->json(['message' => 'Invalid request parameter'], status: 422);
+
+        return $this->json(
+            data: [
+                'product' => $this->productService->findById($id)
+            ],
+            status: 200
+        );
+    }
+
+    #[Route(name: 'add_product', methods: 'POST')]
     public function add(CreateProductRequestDto $createProductRequestDto): JsonResponse
     {
         $requestIsValid = $createProductRequestDto->validate();
